@@ -1,0 +1,8 @@
+.readmi img {
+    width: 320px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #f3c63567;
+    box-shadow: 0 0 25px rgba(111, 35, 243, 0.7)
+}
