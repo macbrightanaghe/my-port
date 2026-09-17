@@ -1,14 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Mobile Navigation Menu Toggle
-    const menuIcon = document.querySelector('#menu-icon');
-    const navbar = document.querySelector('.navbar') || document.querySelector('#nav-links');
+    // 1. Unified Mobile & Admin Navigation Menu Toggle Handler
+    const menuIcon = document.querySelector('#menu-icon') || document.querySelector('.admin-menu-icon');
+    const navbar = document.querySelector('.navbar') || document.querySelector('.nav-links') || document.querySelector('.admin-nav-links');
 
     if (menuIcon && navbar) {
-        menuIcon.onclick = () => {
+        menuIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
             menuIcon.classList.toggle('bx-x');
             navbar.classList.toggle('active');
-        };
+        });
+
+        // Close mobile menu when clicking any nav link
+        const allNavLinks = navbar.querySelectorAll('a');
+        allNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuIcon.classList.remove('bx-x');
+                navbar.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navbar.contains(e.target) && !menuIcon.contains(e.target)) {
+                menuIcon.classList.remove('bx-x');
+                navbar.classList.remove('active');
+            }
+        });
     }
 
     // 2. Scroll Handler: Active Navigation Links & Mobile Menu Dismissal
@@ -30,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (top >= offset && top < offset + height) {
                 navLinks.forEach(link => {
                     link.classList.remove('active');
-                    const targetLink = document.querySelector('header nav a[href*=' + id + ']');
+                    const targetLink = document.querySelector(`header nav a[href*="${id}"]`);
                     if (targetLink) targetLink.classList.add('active');
                 });
             }
@@ -38,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 3. Typed.js Subtitle Animation
-    if (document.querySelector('.multiple-text')) {
+    if (document.querySelector('.multiple-text') && typeof Typed !== 'undefined') {
         new Typed('.multiple-text', {
             strings: ['Software Engineering Student', 'Web Developer', 'System Architect', 'Game Developer'],
             typeSpeed: 70,
@@ -56,7 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal && openModalBtn && closeModalBtn) {
         openModalBtn.onclick = () => modal.style.display = 'flex';
         closeModalBtn.onclick = () => modal.style.display = 'none';
-        window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+        window.onclick = (e) => { 
+            if (e.target === modal) {
+                modal.style.display = 'none'; 
+            }
+        };
     }
 
     // 5. Dark / Light Theme Switching Logic
@@ -81,54 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (themeText) themeText.textContent = isLight ? 'Light' : 'Dark';
     });
 
-    /*// 6. Live Contact Form AJAX Submission
-    const contactForm = document.getElementById('contact-form');
-    const formStatus = document.getElementById('form-status');
-    const submitBtn = document.getElementById('form-submit-btn');
-
-    if (contactForm) {
-        contactForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sending...';
-            }
-            if (formStatus) formStatus.textContent = '';
-
-            const formData = new FormData(contactForm);
-
-            try {
-                const response = await fetch(contactForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                if (response.ok) {
-                    if (formStatus) {
-                        formStatus.style.color = '#10B981';
-                        formStatus.textContent = '✓ Message sent successfully! I will get back to you soon.';
-                    }
-                    contactForm.reset();
-                } else {
-                    throw new Error('Server response error');
-                }
-            } catch (error) {
-                if (formStatus) {
-                    formStatus.style.color = '#EF4444';
-                    formStatus.textContent = '❌ Failed to send message. Please try again.';
-                }
-            } finally {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Send Message';
-                }
-            }
-        });
-    }*/
-
-    // 7. Interactive Filter & URL Sync System
+    // 6. Interactive Filter & URL Sync System
     const filterButtons = document.querySelectorAll('.filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
 
